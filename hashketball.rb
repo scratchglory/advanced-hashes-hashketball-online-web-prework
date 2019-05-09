@@ -74,7 +74,7 @@ def game_hash
             blocks: 7,
             slam_dunks: 2
         }, 
-          "Bismak Biyombo" => {
+          "Bismack Biyombo" => {
               number: 0,
               shoe: 16,
               points: 12,
@@ -162,11 +162,15 @@ def team_colors(color)
   end
 end
 
+
+
 # Operates on the game hash to return an arry of the team names
 def team_names
-  
- 
+  game_hash.collect do |location, team_data|
+      team_data[:team_name]
+  end
 end
+# binding.pry
 
 # takes in an argument of a team name and returns an array of the jersey number's for that team
 def player_numbers(name) 
@@ -183,16 +187,55 @@ end
 
 #   Takes in an argument of a player's name and returns a hash of that player's stats 
 def player_stats(player)
-  game_hash.each do |location, team_data|
-    team_data.each do |attribute, data| 
-      binding.pry
+  game_hash.each do |location, attributes|
+    attributes.each do |key, values| #key is team name colors players 
+      if key == :players
+        values.each do |k, v|
+          if k == player
+            return v
+          end
+        end
+      end
     end
   end
 end
 
+# Return the number of rebounds associated with the player that has the largest shoe size
+# Find the player with the largest shoe size
+# Return that player's number of rebounds
+def big_shoe_rebounds
+ shoe_hash = Hash.new(0)  # setting the default hash at 0
 
-
-
-
-
-
+  game_hash.each do |location, attributes|
+    attributes.each do |key, values|
+      if key == :players
+        values.each do |name, status|
+          status.each do |key, value|
+            if key == :shoe
+              shoe_hash[name] = value
+            end
+          end
+        end
+      end
+    end
+  end
+  sorted = shoe_hash.sort_by { |k, v| v}  # sorting in numerical order, smallest first
+  biggest_shoe = sorted[-1][0]      # going to index -1 and pulling the value set at 0 "Mason Plumlee"
+  # binding.pry
+  
+  game_hash.each do |location, attributes|
+    attributes.each do |key, values|
+      if key == :players
+        values.each do |k, v|
+          if k == biggest_shoe    # pulled from code above
+            v.each do |rebound, rebound_value|
+              if rebound == :rebounds
+                return rebound_value
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
